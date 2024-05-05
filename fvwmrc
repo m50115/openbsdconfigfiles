@@ -1,0 +1,268 @@
+ModulePath /usr/X11R6/lib/X11/fvwm
+
+###########################
+# General configurations. #
+###########################
+EdgeResistance   250 10
+EdgeScroll       0 0
+ClickTime        750
+
+DeskTopSize      3x3
+ColormapFocus    FollowsMouse
+
+####################################
+# Window style and configurations. #
+####################################
+HilightColor     #ffffff #1e1e1e
+MenuStyle        #ffffff #1e1e1e #4dff4d fixed fvwm
+
+Style "*"        BorderWidth 5, HandleWidth 5
+Style "*"        Color #ffffff/#2e2e2e
+Style "*"        FocusFollowsMouse
+Style "*"        RandomPlacement, SmartPlacement
+
+Style "Fvwm*"    NoTitle, Sticky, WindowListSkip
+Style "Fvwm*"    BorderWidth 2, CirculateSkipIcon, CirculateSkip
+Style "FvwmPager" StaysOnTop
+
+Style "Mozilla Firefox" StartsOnPage 1 1, NoTitle
+Style "*Chromium" StartsOnPage 1 2, NoTitle, CenterPlacement
+Style "LibreOf*" StartsOnPage 2 0, NoTitle
+Style "*GNU Ima*" StartsOnPage 2 1, NoTitle
+
+#############################
+# Initialization functions. #
+#############################
+AddToFunc       StartFunction
++                "I" exec feh --bg-fill ~/.config/images/wallpaper.jpg
+
+AddToFunc        InitFunction        "I"   Module   FvwmPager 0 0
+
+AddToFunc        RestartFunction     "I"   Module   FvwmPager 0 0
+
+##########
+# Pager. #
+##########
+*FvwmPagerFont        -adobe-helvetica-bold-r-*-*-10-*-*-*-*-*-*-*
+*FvwmPagerBack        black
+*FvwmPagerFore        white
+*FvwmPagerHilight     #2d2d2d
+*FvwmPagerGeometry    80x60-1-1
+*FvwmPagerLabel 0     "OpenBSD"
+*FvwmPagerSmallFont   5x8
+
+##########
+# Menus. #
+##########
+AddToMenu RootMenu	"OpenBSD"         Title
++                   "XTerm"           exec xterm
++                   "Wireshark"       exec wireshark
++                   "----------"                Nop
++                   "Firefox"         exec firefox
++                   "File manager"    exec xterm -e "nnn"
++                   "Gimp"            exec gimp
++                   "VLC"             exec vlc
++                   "Transmission"    exec transmission-gtk
++                   "Volume"          Popup VolumeMenu
++                   "---------"                Nop
++                   "Restart FVWM"    Restart fvwm
++                   "Lock screen"     exec ~/.config/lock.sh
++                   "Logout"          FvwmForm QuitVerify
++                   "Reboot"          FvwmForm RebootVerify
++                   "Shutdown"        FvwmForm ShutdownVerify
+
+# Window operations for the centre mouse button.
+AddToMenu Global-Window-Ops    "Window Ops"       Title
++                              "Move"             Move-or-Raise2
++	                             "Resize"           Resize-or-Raise2
++                              "Raise"            Raise
++                              "Lower"            Lower
++                              "(De)Iconify"      Iconify
++                              "(Un)Stick"        Stick
++                              "(Un)Maximize"     Maximize-Func
++                              ""                 Nop
++                              "Delete"           Delete
++                              "Close"            Close
++                              "Destroy"          Destroy
++                              ""                 Nop
++                              "Refresh Screen"   Refresh
+
+# Window operations for the top left of every window.
+AddToMenu Window-Ops   "Move"           Move-or-Raise
++                      "Resize"         Resize-or-Raise
++                      "Raise/Lower"    RaiseLower
++                      "Iconify"        Iconify
++                      "(Un)Stick"      Stick
++                      ""               Nop
++                      "Delete"         Delete
++                      "Close"          Close
++                      "Destroy"        Destroy
+
+# Volume menu.
+AddToMenu VolumeMenu  "Volume Control"  Title
++                     "Volume 100%%"    exec mixerctl -q outputs.master=255
++                     "Volume  90%%"    exec mixerctl -q outputs.master=230
++                     "Volume  80%%"    exec mixerctl -q outputs.master=205
++                     "Volume  70%%"    exec mixerctl -q outputs.master=180
++                     "Volume  60%%"    exec mixerctl -q outputs.master=155
++                     "Volume  50%%"    exec mixerctl -q outputs.master=130
++                     "Volume  40%%"    exec mixerctl -q outputs.master=105
++                     "Volume  30%%"    exec mixerctl -q outputs.master=80
++                     "Volume  20%%"    exec mixerctl -q outputs.master=55
++                     "Volume  10%%"    exec mixerctl -q outputs.master=20
++                     "Volume   0%%"    exec mixerctl -q outputs.master=0
+
+#########################
+# Mouse configurations. #
+#########################
+#        Button	Context Modifi 	Function
+Mouse    1      R       A       Menu RootMenu Nop
+Mouse    2      R       A       Menu Global-Window-Ops Nop
+Mouse    3      R       A       WindowList
+
+# Title bar options (minimise, maximise, close).
+#        Button	Context Modifi 	Function
+Mouse    0      1       A       Menu Window-Ops Close
+Mouse    0      2       A       Close
+Mouse    0      4       A       Maximize-Func
+Mouse    0      6       A       Iconify
+
+# Button 1 configurations for frame/sides, icons, and on top.
+#        Button	Context Modifi 	Function
+Mouse    1      FS      A       Resize-or-Raise
+Mouse    1      I       A       Move-or-Iconify
+Mouse    1      T       A       Move-or-Raise
+
+# Button 2 configuration.
+Mouse 2  FST    A       Menu    Window-Ops Nop
+
+##############
+# Functions. #
+##############
+DestroyFunc Move-or-Raise
+AddToFunc Move-or-Raise         "I" Raise
++                               "M" Move
++                               "D" Maximize
+
+DestroyFunc Move-or-Raise2
+AddToFunc Move-or-Raise2        "M" Raise
++                               "M" Move
++                               "D" Lower
+
+DestroyFunc Maximize-Func
+AddToFunc Maximize-Func         "C" Maximize    100 100
+
+DestroyFunc Move-or-Iconify
+AddToFunc Move-or-Iconify       "I" Raise
++                               "M" Move
++                               "D" Iconify
+
+DestroyFunc Resize-or-Raise
+AddToFunc Resize-or-Raise       "I" Raise
++                               "M" Resize
++                               "D" Lower
+
+DestroyFunc Resize-orRaise2
+AddToFunc Resize-or-Raise2      "M" Raise
++                               "M" Resize
++                               "D" Lower
+
+DestroyFunc Iconify-and-Raise
+AddToFunc Iconify-and-Raise     "I" Iconify
++                               "I" Raise
+
+DestroyFunc Snap
+AddToFunc Snap  "I" AnimatedMove $0 0  Warp
++               "I" Resize $1 97 
++               "I" FlipFocus
++               "I" Focus
+  
+DestroyFunc ChangePage
+AddToFunc ChangePage "I" MoveToPage $0 $1
++                   "I" GotoPage $0 $1
+
+DestroyFunc FocusAndWarp 
+AddToFunc FocusAndWarp "I" Focus
++                       "I" WarpToWindow 2p 2p
+
+#######################
+# Keyboard shortcuts. #
+#######################
+
+Key Return A M exec /usr/X11R6/bin/xterm
+Key d A M exec /usr/local/bin/dmenu_run 
+Key k A M exec setxkbmap -layout us
+Key l A M exec setxkbmap -layout es
+Key p A CM exec /usr/bin/doas shutdown -p now 
+Key x W M Delete 
+
+# Arrows + Ctrl / Alt / Shift Change Window Sizes + Snap
+Key Up A C Maximize 99 97 
+Key Left A C Snap 0 49
+Key Left A CS Snap 0 69
+Key Left A S Snap 0 29
+Key Right A C Snap 50 49    
+Key Right A CS Snap 30 69    
+Key Right A S Snap 70 29    
+Key Down A C Iconify
+
+# Arrow + Ctrl Navegate in Pages 
+Key Up A CM Scroll +0 -100 
+Key Left A CM Scroll -100 +0
+Key Right A CM Scroll +100 +0
+Key Down A CM Scroll +0 +100
+
+# Alt + Tab
+Key Tab A M Prev [*] FocusAndWarp           
+Key Tab A SM Next [*] FocusAndWarp
+Key Super_L A A WindowList
+
+Key 1 W CM ChangePage 0 0
+Key 2 W CM ChangePage 1 0
+Key 3 W CM ChangePage 2 0
+Key 4 W CM ChangePage 0 1
+Key 5 W CM ChangePage 1 1
+Key 6 W CM ChangePage 2 1
+Key 7 W CM ChangePage 0 2
+Key 8 W CM ChangePage 1 2
+Key 9 W CM ChangePage 2 2
+
+
+########################################################
+# Confirmation pages for logout, reboot, and shutdown. #
+########################################################
+*QuitVerifyGrabServer
+*QuitVerifyWarpPointer
+*QuitVerifyCommand            Beep
+*QuitVerifyLine               center
+*QuitVerifyText               "Do you really want to logout?"
+*QuitVerifyLine               expand
+*QuitVerifyButton             quit        "Logout"  ^M
+*QuitVerifyCommand            Quit
+*QuitVerifyButton             quit        "Cancel"  ^[
+*QuitVerifyCommand            Nop
+Style "QuitVerify"            NoTitle, NoHandles, BorderWidth 3
+
+*RebootVerifyGrabServer
+*RebootVerifyWarpPointer
+*RebootVerifyCommand          Beep
+*RebootVerifyLine             center
+*RebootVerifyText             "Do you really want to reboot?"
+*RebootVerifyLine             expand
+*RebootVerifyButton           quit        "Reboot"  ^M
+*RebootVerifyCommand          exec /usr/bin/doas /sbin/reboot
+*RebootVerifyButton           quit        "Cancel"  ^[
+*RebootVerifyCommand          Nop
+Style "RebootVerify"          NoTitle, NoHandles, BorderWidth 3
+
+*ShutdownVerifyGrabServer
+*ShutdownVerifyWarpPointer
+*ShutdownVerifyCommand        Beep
+*ShutdownVerifyLine           center
+*ShutdownVerifyText           "Do you really want to shutdown?"
+*ShutdownVerifyLine           expand
+*ShutdownVerifyButton         quit        "Shutdown"  ^M
+*ShutdownVerifyCommand        exec /usr/bin/doas /sbin/shutdown -hp now
+*ShutdownVerifyButton         quit        "Cancel"  ^[
+*ShutdownVerifyCommand        Nop
+Style "ShutdownVerify"        NoTitle, NoHandles, BorderWidth 3
